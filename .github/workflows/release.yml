@@ -50,21 +50,20 @@ jobs:
           asset_content_type: application/gzip
 
   release-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       RUST: i686-unknown-linux-gnu
       RELEASE_BIN: libpawn_json
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install gcc-multilib
-        run: sudo apt update && sudo apt install gcc-multilib -y
-
-      - name: Install Rust (rustup)
-        run: rustup target add ${{ env.RUST }}
-
-      - name: Build
-        run: cargo build --release --target ${{ env.RUST }}
+      - name: Build using Docker
+        shell: bash
+        run: |
+          cd docker
+          chmod +x ./build.sh
+          chmod +x ./docker-entrypoint.sh
+          ./build.sh
 
       - name: Create artifacts directory
         run: |
